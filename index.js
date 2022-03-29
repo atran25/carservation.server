@@ -5,12 +5,12 @@ const app = Express();
 const server = require("http").Server(app);
 
 app.use(Cors());
-app.use("/", (req, res) => {
+app.get("/", (req, res) => {
   res.status(200).json({
     pathName: "/",
   });
 });
-app.use("/test", (req, res) => {
+app.get("/test", (req, res) => {
   res.status(200).json({
     pathName: "/test",
   });
