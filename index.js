@@ -12,7 +12,7 @@ app.use("/", (req, res) => {
 });
 app.use("/test", (req, res) => {
   res.status(200).json({
-    appName: "Server",
+    pathName: "/test",
   });
 });
 
