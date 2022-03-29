@@ -6,7 +6,7 @@ const server = require("http").Server(app);
 
 app.use(Cors());
 if (process.env.NODE_ENV === "production") {
-  app.use(express.static("build"));
+  app.use(Express.static("build"));
   app.get("*", (req, res) => {
     req.sendFile(path.resolve(__dirname, "build", "index.html"));
   });
