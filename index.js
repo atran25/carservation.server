@@ -5,12 +5,11 @@ const app = Express();
 const server = require("http").Server(app);
 
 app.use(Cors());
-if (process.env.NODE_ENV === "production") {
-  app.use(Express.static("build"));
-  app.get("*", (req, res) => {
-    req.sendFile(path.resolve(__dirname, "build", "index.html"));
+app.use("/", (req, res) => {
+  res.status(200).json({
+    pathName: "/",
   });
-}
+});
 app.use("/test", (req, res) => {
   res.status(200).json({
     appName: "Server",
