@@ -1,7 +1,10 @@
 const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema({
-  userId: Number,
+  userId: {
+    type: Number,
+    unique: true,
+  },
   name: String,
   email: String,
   reservations: [Number],
