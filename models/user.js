@@ -11,4 +11,4 @@ const userSchema = new mongoose.Schema({
   isEmployee: Boolean,
 });
 
-module.exports = mongoose.model("User", userSchema);
+module.exports = mongoose.model("User", userSchema, "users");

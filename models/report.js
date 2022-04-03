@@ -3,8 +3,8 @@ const mongoose = require("mongoose");
 const reportSchema = new mongoose.Schema({
   parkingSpotId: Number,
   userId: Number,
-  offenderId: Number,
-  offenderLicensePlate: Number,
+  offenderId: String,
+  offenderLicensePlate: String,
 });
 
-module.exports = mongoose.model("Report", reportSchema);
+module.exports = mongoose.model("Report", reportSchema, "reports");
