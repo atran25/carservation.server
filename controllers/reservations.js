@@ -1,5 +1,6 @@
 const reservationsRouter = require("express").Router();
 const Reservation = require("../models/reservation");
+const User = require("../models/user");
 
 reservationsRouter.get("/", (request, response) => {
   Reservation.find({}).then((reservations) => {

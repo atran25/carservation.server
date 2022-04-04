@@ -1,7 +1,10 @@
 const mongoose = require("mongoose");
 
 const reservationSchema = new mongoose.Schema({
-  reservationId: String,
+  reservationId: {
+    type: String,
+    unique: true,
+  },
   parkingSpotId: String,
   userId: String,
   licensePlate: String,
