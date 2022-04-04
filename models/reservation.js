@@ -1,10 +1,10 @@
 const mongoose = require("mongoose");
 
 const reservationSchema = new mongoose.Schema({
-  reservationId: Number,
-  parkingSpotId: Number,
-  userId: Number,
-  licensePlate: Number,
+  reservationId: String,
+  parkingSpotId: String,
+  userId: String,
+  licensePlate: String,
   reservationDate: Date,
   hourStart: Number,
   hourEnd: Number,
