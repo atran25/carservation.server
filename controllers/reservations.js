@@ -8,18 +8,19 @@ reservationsRouter.get("/", (request, response) => {
   });
 });
 
-reservationsRouter.get("/:reservationId", (request, response) => {
+reservationsRouter.get("/:reservationId", (request, response, next) => {
   id = request.params.reservationId;
   Reservation.findOne({ reservationId: id }, function (error, docs) {
     if (error) {
       //TODO: Push to error handler
+      next(error);
     } else {
       response.json(docs);
     }
   });
 });
 
-reservationsRouter.post("/", (request, response) => {
+reservationsRouter.post("/", (request, response, next) => {
   const body = request.body;
 
   const newReservation = new Reservation({
@@ -39,10 +40,11 @@ reservationsRouter.post("/", (request, response) => {
     })
     .catch((error) => {
       //TODO: Push to error handler
+      next(error);
     });
 });
 
-reservationsRouter.delete("/:reservationId", (request, response) => {
+reservationsRouter.delete("/:reservationId", (request, response, next) => {
   id = request.params.reservationId;
 
   Reservation.deleteOne({ reservationId: id })
@@ -51,10 +53,11 @@ reservationsRouter.delete("/:reservationId", (request, response) => {
     })
     .catch((error) => {
       //TODO: Push to error handler
+      next(error);
     });
 });
 
-reservationsRouter.put("/:reservationId", (request, response) => {
+reservationsRouter.put("/:reservationId", (request, response, next) => {
   id = request.params.reservationId;
   const body = request.body;
 
@@ -74,6 +77,7 @@ reservationsRouter.put("/:reservationId", (request, response) => {
     })
     .catch((error) => {
       //TODO: Push to error handler
+      next(error);
     });
 });
 
