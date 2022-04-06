@@ -6,6 +6,7 @@ const config = require("./utils/config");
 const middleware = require("./utils/middleware");
 const usersRouter = require("./controllers/users");
 const reservationsRouter = require("./controllers/reservations");
+const datesRouter = require("./controllers/dates");
 
 mongoose
   .connect(config.MONGODB_URI)
@@ -22,6 +23,7 @@ app.use(middleware.requestLogger);
 
 app.use("/api/users", usersRouter);
 app.use("/api/reservations", reservationsRouter);
+app.use("/api/dates", datesRouter);
 
 app.use(middleware.unknownEndpoint);
 app.use(middleware.errorHandler);

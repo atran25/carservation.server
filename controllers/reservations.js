@@ -1,6 +1,5 @@
 const reservationsRouter = require("express").Router();
 const Reservation = require("../models/reservation");
-const User = require("../models/user");
 
 reservationsRouter.get("/", (request, response) => {
   Reservation.find({}).then((reservations) => {
@@ -9,7 +8,7 @@ reservationsRouter.get("/", (request, response) => {
 });
 
 reservationsRouter.get("/:reservationId", (request, response, next) => {
-  id = request.params.reservationId;
+  const id = request.params.reservationId;
   Reservation.findOne({ reservationId: id }, function (error, docs) {
     if (error) {
       //TODO: Push to error handler
@@ -28,7 +27,7 @@ reservationsRouter.post("/", (request, response, next) => {
     parkingSpotId: body.parkingSpotId,
     userId: body.userId,
     licensePlate: body.licensePlate,
-    reservationDate: body.reservationDate,
+    reservationDate: new Date(body.reservationDate),
     time: body.time,
   });
 
@@ -44,7 +43,7 @@ reservationsRouter.post("/", (request, response, next) => {
 });
 
 reservationsRouter.delete("/:reservationId", (request, response, next) => {
-  id = request.params.reservationId;
+  const id = request.params.reservationId;
 
   Reservation.deleteOne({ reservationId: id })
     .then((result) => {
@@ -57,7 +56,7 @@ reservationsRouter.delete("/:reservationId", (request, response, next) => {
 });
 
 reservationsRouter.put("/:reservationId", (request, response, next) => {
-  id = request.params.reservationId;
+  const id = request.params.reservationId;
   const body = request.body;
 
   const update = {
@@ -65,7 +64,7 @@ reservationsRouter.put("/:reservationId", (request, response, next) => {
     parkingSpotId: body.parkingSpotId,
     userId: body.userId,
     licensePlate: body.licensePlate,
-    reservationDate: body.reservationDate,
+    reservationDate: new Date(body.reservationDate),
     time: body.time,
   };
 
