@@ -29,8 +29,7 @@ reservationsRouter.post("/", (request, response, next) => {
     userId: body.userId,
     licensePlate: body.licensePlate,
     reservationDate: body.reservationDate,
-    hourStart: body.hourStart,
-    hourEnd: body.hourEnd,
+    time: body.time,
   });
 
   newReservation
@@ -67,8 +66,7 @@ reservationsRouter.put("/:reservationId", (request, response, next) => {
     userId: body.userId,
     licensePlate: body.licensePlate,
     reservationDate: body.reservationDate,
-    hourStart: body.hourStart,
-    hourEnd: body.hourEnd,
+    time: body.time,
   };
 
   Reservation.updateOne({ reservationId: id }, update)

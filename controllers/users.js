@@ -26,7 +26,6 @@ usersRouter.post("/", (request, response, next) => {
     userId: body.userId,
     name: body.name,
     email: body.email,
-    reservations: body.reservations,
     isEmployee: body.isEmployee,
   });
 
@@ -62,7 +61,6 @@ usersRouter.put("/:userId", (request, response, next) => {
     userId: body.userId,
     name: body.name,
     email: body.email,
-    reservations: body.reservations,
     isEmployee: body.isEmployee,
   };
 

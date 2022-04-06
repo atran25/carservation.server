@@ -7,7 +7,6 @@ const userSchema = new mongoose.Schema({
   },
   name: String,
   email: String,
-  reservations: [String],
   isEmployee: Boolean,
 });
 

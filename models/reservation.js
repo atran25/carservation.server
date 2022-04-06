@@ -9,8 +9,7 @@ const reservationSchema = new mongoose.Schema({
   userId: String,
   licensePlate: String,
   reservationDate: Date,
-  hourStart: Number,
-  hourEnd: Number,
+  time: Number,
 });
 
 module.exports = mongoose.model("Reservation", reservationSchema);
