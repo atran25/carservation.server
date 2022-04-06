@@ -1,25 +1,9 @@
-const Express = require("express");
-const Cors = require("cors");
-const PORT = process.env.PORT || 5000;
-const app = Express();
-const server = require("http").Server(app);
+const app = require("./app");
+const http = require("http");
+const config = require("./utils/config");
 
-app.use(Cors());
-app.get("/", (req, res) => {
-  res.status(200).json({
-    pathName: "/",
-  });
-});
-app.get("/test", (req, res) => {
-  res.status(200).json({
-    pathName: "/test",
-  });
-});
+const server = http.createServer(app);
 
-server.listen(PORT, (error) => {
-  if (error) {
-    console.log("Error");
-  } else {
-    console.log("Success");
-  }
+server.listen(config.PORT, () => {
+  console.log(`Server running on port ${config.PORT}`);
 });
