@@ -7,18 +7,19 @@ usersRouter.get("/", (request, response) => {
   });
 });
 
-usersRouter.get("/:userId", (request, response) => {
+usersRouter.get("/:userId", (request, response, next) => {
   id = request.params.userId;
   User.findOne({ userId: id }, function (error, docs) {
     if (error) {
       //TODO: Push to error handler
+      next(error);
     } else {
       response.json(docs);
     }
   });
 });
 
-usersRouter.post("/", (request, response) => {
+usersRouter.post("/", (request, response, next) => {
   const body = request.body;
 
   const newUser = new User({
@@ -36,10 +37,11 @@ usersRouter.post("/", (request, response) => {
     })
     .catch((error) => {
       //TODO: Push to error handler
+      next(error);
     });
 });
 
-usersRouter.delete("/:userId", (request, response) => {
+usersRouter.delete("/:userId", (request, response, next) => {
   id = request.params.userId;
 
   User.deleteOne({ userId: id })
@@ -48,10 +50,11 @@ usersRouter.delete("/:userId", (request, response) => {
     })
     .catch((error) => {
       //TODO: Push to error handler
+      next(error);
     });
 });
 
-usersRouter.put("/:userId", (request, response) => {
+usersRouter.put("/:userId", (request, response, next) => {
   id = request.params.userId;
   const body = request.body;
 
@@ -69,6 +72,7 @@ usersRouter.put("/:userId", (request, response) => {
     })
     .catch((error) => {
       //TODO: Push to error handler
+      next(error);
     });
 });
 
