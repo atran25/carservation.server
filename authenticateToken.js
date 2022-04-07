@@ -9,7 +9,6 @@ admin.initializeApp({
   
 async function decodeIDToken(request, res, next) {
   const header = request.headers?.authorization;
-    console.log("header: ", header)
       if (header !== 'Bearer null' && request.headers?.authorization?.startsWith('Bearer ')) {const idToken = request.headers.authorization.split('Bearer ')[1];
       try {
           console.log("idtoken: ", idToken)

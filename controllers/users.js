@@ -22,12 +22,11 @@ usersRouter.get("/:userId", (request, response, next) => {
 usersRouter.post("/", (request, response, next) => {
 
 const auth = request.currentUser;
-console.log(auth)
 let newUser;
 
   if (auth) {
     newUser = new User({
-      userId: request.body.userId,
+      userId: request.body.uid,
       name: request.body.name,
       email: request.body.email,
       isEmployee: request.body.isEmployee
