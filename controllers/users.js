@@ -20,16 +20,22 @@ usersRouter.get("/:userId", (request, response, next) => {
 });
 
 usersRouter.post("/", (request, response, next) => {
-  const body = request.body;
 
-  const newUser = new User({
-    userId: body.userId,
-    name: body.name,
-    email: body.email,
-    isEmployee: body.isEmployee,
-  });
+const auth = request.currentUser;
+console.log(auth)
+let newUser;
 
-  newUser
+  if (auth) {
+    newUser = new User({
+      userId: request.body.userId,
+      name: request.body.name,
+      email: request.body.email,
+      isEmployee: request.body.isEmployee
+    });
+  }
+
+  if (newUser) {
+    newUser
     .save()
     .then((savedUser) => {
       response.json(savedUser);
@@ -38,6 +44,12 @@ usersRouter.post("/", (request, response, next) => {
       //TODO: Push to error handler
       next(error);
     });
+  }
+
+  else {
+    console.log("user not authorized")
+  }
+
 });
 
 usersRouter.delete("/:userId", (request, response, next) => {
