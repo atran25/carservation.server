@@ -10,9 +10,14 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "axios": "^0.26.1",
     "cors": "^2.8.5",
     "dotenv": "^16.0.0",
     "express": "^4.17.3",
-    "mongoose": "^6.2.9"
+    "firebase": "^9.6.10",
+    "firebase-admin": "^10.0.2",
+    "mongoose": "^6.2.9",
+    "nodemon": "^2.0.15",
+    "react-router-dom": "^6.3.0"
   }
 }
