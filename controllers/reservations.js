@@ -7,16 +7,55 @@ reservationsRouter.get("/", (request, response) => {
   });
 });
 
-reservationsRouter.get("/:reservationId", (request, response, next) => {
-  const id = request.params.reservationId;
-  Reservation.findOne({ reservationId: id }, function (error, docs) {
-    if (error) {
-      //TODO: Push to error handler
+reservationsRouter.get(
+  "/reservationId/:reservationId",
+  (request, response, next) => {
+    const id = request.params.reservationId;
+    Reservation.findOne({ reservationId: id }, function (error, docs) {
+      if (error) {
+        //TODO: Push to error handler
+        next(error);
+      } else {
+        response.json(docs);
+      }
+    });
+  }
+);
+
+reservationsRouter.get("/date/:date", (request, response, next) => {
+  date = new Date(request.params.date);
+  Reservation.find({ reservationDate: date })
+    .then((reservations) => {
+      response.json(reservations);
+    })
+    .catch((error) => {
       next(error);
-    } else {
-      response.json(docs);
-    }
-  });
+    });
+});
+
+reservationsRouter.get(
+  "/parkingSpotId/:parkingSpotId",
+  (request, response, next) => {
+    id = request.params.parkingSpotId;
+    Reservation.find({ parkingSpotId: id })
+      .then((reservations) => {
+        response.json(reservations);
+      })
+      .catch((error) => {
+        next(error);
+      });
+  }
+);
+
+reservationsRouter.get("/userId/:userId", (request, response, next) => {
+  id = request.params.userId;
+  Reservation.find({ userId: id })
+    .then((reservations) => {
+      response.json(reservations);
+    })
+    .catch((error) => {
+      next(error);
+    });
 });
 
 reservationsRouter.post("/", (request, response, next) => {
@@ -29,6 +68,7 @@ reservationsRouter.post("/", (request, response, next) => {
     licensePlate: body.licensePlate,
     reservationDate: new Date(body.reservationDate),
     time: body.time,
+    isCheckedIn: body.isCheckedIn || false,
   });
 
   newReservation
@@ -66,6 +106,7 @@ reservationsRouter.put("/:reservationId", (request, response, next) => {
     licensePlate: body.licensePlate,
     reservationDate: new Date(body.reservationDate),
     time: body.time,
+    isCheckedIn: body.isCheckedIn || false,
   };
 
   Reservation.updateOne({ reservationId: id }, update)
