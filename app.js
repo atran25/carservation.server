@@ -6,7 +6,7 @@ const config = require("./utils/config");
 const middleware = require("./utils/middleware");
 const usersRouter = require("./controllers/users");
 const reservationsRouter = require("./controllers/reservations");
-const decodeIDToken = require('./authenticateToken')
+const decodeIDToken = require('./google-credentials')
 
 
 mongoose

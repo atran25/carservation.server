@@ -20,35 +20,31 @@ usersRouter.get("/:userId", (request, response, next) => {
 });
 
 usersRouter.post("/", (request, response, next) => {
-
-const auth = request.currentUser;
-let newUser;
+  const auth = request.currentUser;
+  let newUser;
 
   if (auth) {
     newUser = new User({
       userId: request.body.uid,
       name: request.body.name,
       email: request.body.email,
-      isEmployee: request.body.isEmployee
+      isEmployee: request.body.isEmployee,
     });
   }
 
   if (newUser) {
     newUser
-    .save()
-    .then((savedUser) => {
-      response.json(savedUser);
-    })
-    .catch((error) => {
-      //TODO: Push to error handler
-      next(error);
-    });
+      .save()
+      .then((savedUser) => {
+        response.json(savedUser);
+      })
+      .catch((error) => {
+        //TODO: Push to error handler
+        next(error);
+      });
+  } else {
+    console.log("user not authorized");
   }
-
-  else {
-    console.log("user not authorized")
-  }
-
 });
 
 usersRouter.delete("/:userId", (request, response, next) => {
