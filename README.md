@@ -1,5 +1,22 @@
 # carservation.server
 
+## How to Run
+```
+To run our application’s back end: https://github.com/atran25/carservation.server
+Clone the repository
+Run npm install in the root directory
+Open directory in text editor
+Create a .env file in the root directory
+Inside the .env file write the following information:
+MONGODB_URI = ...omitted
+Create a google-credentials.json in the root directory
+Inside the google-credentials.json file, write the following information:
+{
+  ...omitted
+}
+Run npm start 
+If you are not able to run it locally, you can view it here: https://carservation.herokuapp.com/
+```
 ## Data Schmas
 ### User
 ```
