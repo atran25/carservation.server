@@ -10,6 +10,7 @@ const reservationSchema = new mongoose.Schema({
   licensePlate: String,
   reservationDate: Date,
   time: Number,
+  isCheckedIn: Boolean,
 });
 
 module.exports = mongoose.model("Reservation", reservationSchema);
