@@ -24,8 +24,6 @@ app.use(middleware.requestLogger);
 
 app.use("/api/users", usersRouter);
 app.use("/api/reservations", reservationsRouter);
-// app.use("/api/dates", datesRouter);
-// app.use("/api/parkingspot", parkingSpotRouter);
 
 app.use(middleware.unknownEndpoint);
 app.use(middleware.errorHandler);
