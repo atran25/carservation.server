@@ -66,7 +66,7 @@ reservationsRouter.post("/", (request, response, next) => {
     parkingSpotId: body.parkingSpotId,
     userId: body.userId,
     licensePlate: body.licensePlate,
-    reservationDate: new Date(body.reservationDate),
+    reservationDate: new Date(body.reservationDate.substring(0,13) + ":00:00.000+00:00"), //parse to remove min
     time: body.time,
     isCheckedIn: body.isCheckedIn || false,
   });

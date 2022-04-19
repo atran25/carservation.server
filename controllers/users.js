@@ -19,32 +19,45 @@ usersRouter.get("/:userId", (request, response, next) => {
   });
 });
 
-usersRouter.post("/", (request, response, next) => {
+usersRouter.post("/", async (request, response, next) => {
   const auth = request.currentUser;
   let newUser;
 
   if (auth) {
+
     newUser = new User({
       userId: request.body.uid,
       name: request.body.name,
       email: request.body.email,
       isEmployee: request.body.isEmployee,
     });
+
+    const newUserExistsAlready = await User.exists({userId: request.body.uid});
+
+    //save to db if user does not exist yet
+    if (!newUserExistsAlready) { 
+
+      newUser
+        .save()
+        .then((savedUser) => {
+          response.json(savedUser);
+        })
+        .catch((error) => {
+          next(error);
+        });
+ 
+    }
+
+    else {
+      console.log("logging in existing user");
+    }
+
   }
 
-  if (newUser) {
-    newUser
-      .save()
-      .then((savedUser) => {
-        response.json(savedUser);
-      })
-      .catch((error) => {
-        //TODO: Push to error handler
-        next(error);
-      });
-  } else {
+  else {
     console.log("user not authorized");
   }
+
 });
 
 usersRouter.delete("/:userId", (request, response, next) => {
