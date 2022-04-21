@@ -19,6 +19,24 @@ const initialReservations = [
     time: 19,
     isCheckedIn: false,
   },
+  {
+    reservationId: "19ed3897-44af-4fdb-84a2-56fa5a781982new1",
+    parkingSpotId: "F",
+    userId: "RG2prv7v6whlSantpYOGijyg8eH3new1",
+    licensePlate: "43",
+    reservationDate: "2022-04-19",
+    time: 29,
+    isCheckedIn: false,
+  },
+  {
+    reservationId: "19ed3897-44af-4fdb-84a2-56fa5a781982new2",
+    parkingSpotId: "D",
+    userId: "RG2prv7v6whlSantpYOGijyg8eH3",
+    licensePlate: "43",
+    reservationDate: "2022-04-19",
+    time: 19,
+    isCheckedIn: false,
+  },
 ];
 
 const reservationsInDB = async () => {
