@@ -3,39 +3,24 @@ const supertest = require("supertest");
 const app = require("../app");
 const api = supertest(app);
 const Reservation = require("../models/reservation");
-
-const initialReservations = [
-  {
-    reservationId: "ca485086-f01b-455e-9e18-6704696cc583",
-    parkingSpotId: "B",
-    userId: "RG2prv7v6whlSantpYOGijyg8eH3",
-    licensePlate: "f42",
-    reservationDate: "2022-04-18",
-    time: 19,
-    isCheckedIn: false,
-  },
-  {
-    reservationId: "19ed3897-44af-4fdb-84a2-56fa5a781982",
-    parkingSpotId: "D",
-    userId: "RG2prv7v6whlSantpYOGijyg8eH3",
-    licensePlate: "43",
-    reservationDate: "2022-04-19",
-    time: 19,
-    isCheckedIn: false,
-  },
-];
+const reservationHelper = require("./test_reservation_helper");
 
 beforeEach(async () => {
   await Reservation.deleteMany({});
-  let reservationObject = new Reservation(initialReservations[0]);
-  await reservationObject.save();
-  reservationObject = new Reservation(initialReservations[1]);
-  await reservationObject.save();
+  // console.log("Delete all reservations in database");
+  for (let reservation of reservationHelper.initialReservations) {
+    let newReservation = new Reservation(reservation);
+    await newReservation.save();
+    // console.log("New reservation added to database");
+  }
+  // console.log("All initial reservation in database added");
 });
 
 test("all reservations are returned", async () => {
   const response = await api.get("/api/reservations");
-  expect(response.body).toHaveLength(initialReservations.length);
+  expect(response.body).toHaveLength(
+    reservationHelper.initialReservations.length
+  );
 });
 
 test("initial reservations were added", async () => {
@@ -72,13 +57,34 @@ test("a reservation can be added", async () => {
     .expect(200)
     .expect("Content-Type", /application\/json/);
 
-  const response = await api.get("/api/reservations");
-  const reservationId = response.body.map(
+  const response = await reservationHelper.reservationsInDB();
+  const reservationId = response.map(
     (reservation) => reservation.reservationId
   );
 
-  expect(response.body).toHaveLength(initialReservations.length + 1);
+  expect(response).toHaveLength(
+    reservationHelper.initialReservations.length + 1
+  );
   expect(reservationId).toContain("bbe0b65c-e781-4bec-81ff-3555a0949b2cadded");
+});
+
+test("a reservation can be deleted", async () => {
+  const reservationIdToDelete =
+    reservationHelper.initialReservations[0].reservationId;
+  await api
+    .delete(`/api/reservations/${reservationIdToDelete}`)
+    .expect(200)
+    .expect("Content-Type", /application\/json/);
+
+  const response = await reservationHelper.reservationsInDB();
+  const reservationId = response.map(
+    (reservation) => reservation.reservationId
+  );
+
+  expect(response).toHaveLength(
+    reservationHelper.initialReservations.length - 1
+  );
+  expect(reservationId).not.toContain(reservationIdToDelete);
 });
 
 afterAll(() => {
