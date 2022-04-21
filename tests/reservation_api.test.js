@@ -64,25 +64,49 @@ test("a specific reservation can be viewed using the reservationId", async () =>
   expect(reservationResponse.isCheckedIn).toBe(reservationToView.isCheckedIn);
 });
 
-// test("specific reservations can be viewed using the date", async () => {
-//   const reservationToView = reservationHelper.initialReservations[0];
-//   const reservationDateToView = reservationToView.reservationDate;
+test("specific reservations can be viewed using the date", async () => {
+  const reservationToView = reservationHelper.initialReservations[0];
+  const reservationDateToView = reservationToView.reservationDate;
 
-//   const response = await api
-//     .get(`/api/reservations/date/${reservationDateToView}`)
-//     .expect("Content-Type", /application\/json/);
+  const response = await api
+    .get(`/api/reservations/date/${reservationDateToView}`)
+    .expect("Content-Type", /application\/json/);
 
-//   // Loop through the initial reservations and if they are equal to the reservation date, add 1 to the counter
-//   let initialReservationsWithCertainDate =
-//     reservationHelper.initialReservations.reduce((sum, reservation) => {
-//       return reservation.reservationDate === reservationDateToView
-//         ? sum + 1
-//         : sum;
-//     }, 0);
+  // Loop through the initial reservations and if they are equal to the reservation date, add 1 to the counter
+  let initialReservationsWithCertainDate =
+    reservationHelper.initialReservations.reduce((sum, reservation) => {
+      return reservation.reservationDate === reservationDateToView
+        ? sum + 1
+        : sum;
+    }, 0);
 
-//   const reservationResponse = response.body;
-//   expect(reservationResponse).toHaveLength(initialReservationsWithCertainDate);
-// });
+  const reservationResponse = response.body;
+  expect(reservationResponse).toHaveLength(initialReservationsWithCertainDate);
+  for (let reservation of response.body) {
+    expect(reservation.reservationDate).toContain(reservationDateToView);
+  }
+});
+
+test("specific reservations can be viewed using the userId", async () => {
+  const reservationToView = reservationHelper.initialReservations[0];
+  const reservationUserIdToView = reservationToView.userId;
+
+  const response = await api
+    .get(`/api/reservations/userId/${reservationUserIdToView}`)
+    .expect("Content-Type", /application\/json/);
+
+  // Loop through the initial reservations and if they are equal to the reservation date, add 1 to the counter
+  let initialReservationsWithUserId =
+    reservationHelper.initialReservations.reduce((sum, reservation) => {
+      return reservation.userId === reservationUserIdToView ? sum + 1 : sum;
+    }, 0);
+
+  const reservationResponse = response.body;
+  expect(reservationResponse).toHaveLength(initialReservationsWithUserId);
+  for (let reservation of response.body) {
+    expect(reservation.userId).toContain(reservationUserIdToView);
+  }
+});
 
 test("a reservation can be added", async () => {
   const newReservation = {
