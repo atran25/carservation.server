@@ -35,16 +35,16 @@ reservationsRouter.get("/date/:date", (request, response, next) => {
 
 //Return all reservations in range of startDate and endDate
 reservationsRouter.get("/date/:startDate/:endDate", (request, response, next) => {
-  const startDate = new Date(request.params.startDate);
-  const startDateMinus1hr = new Date(request.params.startDate);
+    const startDate = new Date(request.params.startDate);
+    const startDateMinus1hr = new Date(request.params.startDate);
   startDateMinus1hr.setHours(startDateMinus1hr.getHours()-1);
-  const startDateMinus2hr = new Date(request.params.startDate);
+    const startDateMinus2hr = new Date(request.params.startDate);
   startDateMinus2hr.setHours(startDateMinus2hr.getHours()-2);
-  const endDate = new Date(request.params.endDate);
+    const endDate = new Date(request.params.endDate);
   console.log(startDate, startDateMinus2hr)
 
-  Reservation.find({
-    $and: [
+    Reservation.find({
+      $and: [
       {reservationDate: {$lt: endDate}},
       {$or: [
         {reservationDate: {$gte: startDate}},
@@ -52,13 +52,13 @@ reservationsRouter.get("/date/:startDate/:endDate", (request, response, next) =>
         {reservationDate: startDateMinus2hr, time: {$gte: 3}}
       ]}
     ]
-  })
-    .then((reservations) => {
-      response.json(reservations);
     })
-    .catch((error) => {
-      next(error);
-    });
+      .then((reservations) => {
+        response.json(reservations);
+      })
+      .catch((error) => {
+        next(error);
+      });
 });
 
 reservationsRouter.get(
@@ -78,6 +78,16 @@ reservationsRouter.get(
 reservationsRouter.get("/userId/:userId", (request, response, next) => {
   id = request.params.userId;
   Reservation.find({ userId: id })
+    .then((reservations) => {
+      response.json(reservations);
+    })
+    .catch((error) => {
+      next(error);
+    });
+});
+
+reservationsRouter.get("/checkedIn", (request, response, next) => {
+  Reservation.find({ isCheckedIn: true })
     .then((reservations) => {
       response.json(reservations);
     })
