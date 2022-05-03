@@ -34,32 +34,37 @@ reservationsRouter.get("/date/:date", (request, response, next) => {
 });
 
 //Return all reservations in range of startDate and endDate
-reservationsRouter.get("/date/:startDate/:endDate", (request, response, next) => {
-  const startDate = new Date(request.params.startDate);
-  const startDateMinus1hr = new Date(request.params.startDate);
-  startDateMinus1hr.setHours(startDateMinus1hr.getHours()-1);
-  const startDateMinus2hr = new Date(request.params.startDate);
-  startDateMinus2hr.setHours(startDateMinus2hr.getHours()-2);
-  const endDate = new Date(request.params.endDate);
-  console.log(startDate, startDateMinus2hr)
+reservationsRouter.get(
+  "/date/:startDate/:endDate",
+  (request, response, next) => {
+    const startDate = new Date(request.params.startDate);
+    const startDateMinus1hr = new Date(request.params.startDate);
+    startDateMinus1hr.setHours(startDateMinus1hr.getHours() - 1);
+    const startDateMinus2hr = new Date(request.params.startDate);
+    startDateMinus2hr.setHours(startDateMinus2hr.getHours() - 2);
+    const endDate = new Date(request.params.endDate);
+    console.log(startDate, startDateMinus2hr);
 
-  Reservation.find({
-    $and: [
-      {reservationDate: {$lt: endDate}},
-      {$or: [
-        {reservationDate: {$gte: startDate}},
-        {reservationDate: startDateMinus1hr, time: {$gte: 2}},
-        {reservationDate: startDateMinus2hr, time: {$gte: 3}}
-      ]}
-    ]
-  })
-    .then((reservations) => {
-      response.json(reservations);
+    Reservation.find({
+      $and: [
+        { reservationDate: { $lt: endDate } },
+        {
+          $or: [
+            { reservationDate: { $gte: startDate } },
+            { reservationDate: startDateMinus1hr, time: { $gte: 2 } },
+            { reservationDate: startDateMinus2hr, time: { $gte: 3 } },
+          ],
+        },
+      ],
     })
-    .catch((error) => {
-      next(error);
-    });
-});
+      .then((reservations) => {
+        response.json(reservations);
+      })
+      .catch((error) => {
+        next(error);
+      });
+  }
+);
 
 reservationsRouter.get(
   "/parkingSpotId/:parkingSpotId",
@@ -86,6 +91,17 @@ reservationsRouter.get("/userId/:userId", (request, response, next) => {
     });
 });
 
+reservationsRouter.get("/checkedIn", (request, response, next) => {
+  isCheckedIn = request.params.isCheckedIn;
+  Reservation.find({ isCheckedIn: true })
+    .then((reservations) => {
+      response.json(reservations);
+    })
+    .catch((error) => {
+      next(error);
+    });
+});
+
 reservationsRouter.post("/", (request, response, next) => {
   const body = request.body;
 
@@ -94,7 +110,9 @@ reservationsRouter.post("/", (request, response, next) => {
     parkingSpotId: body.parkingSpotId,
     userId: body.userId,
     licensePlate: body.licensePlate,
-    reservationDate: new Date(body.reservationDate.substring(0,13) + ":00:00.000+00:00"), //parse to remove min
+    reservationDate: new Date(
+      body.reservationDate.substring(0, 13) + ":00:00.000+00:00"
+    ), //parse to remove min
     time: body.time,
     isCheckedIn: body.isCheckedIn || false,
   });
