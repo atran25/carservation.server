@@ -87,6 +87,13 @@ test("specific reservations can be viewed using the date", async () => {
   }
 });
 
+test("specific reservations can be viewed between a start and end date", async () => {
+  await api
+    .get("/api/reservations")
+    .expect(200)
+    .expect("Content-Type", /application\/json/);
+});
+
 test("specific reservations can be viewed using the userId", async () => {
   const reservationToView = reservationHelper.initialReservations[0];
   const reservationUserIdToView = reservationToView.userId;
