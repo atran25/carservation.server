@@ -9,6 +9,7 @@ Open directory in text editor
 Create a .env file in the root directory
 Inside the .env file write the following information:
 MONGODB_URI = ...omitted
+TEST_MONGODB_URI = ...omitted
 Create a google-credentials.json in the root directory
 Inside the google-credentials.json file, write the following information:
 {
@@ -69,11 +70,17 @@ Returns reservation matching the reservationId parameter
 GET /date/:date
 Returns all reservations that match the date parameter
 
+GET /date/:startDate/:endDate
+Returns all reservations that are between the 2 query parameter dates.
+
 GET /parkingSpotId/:parkingSpotId
 Returns all reservations that match the parkingSpotId parameter
 
 GET /userId/:userId
 Returns all reservations that match the userId parameter
+
+GET /checkedIn
+Returns all reservations that have been checked in
 
 POST /
 Creates a reservation in the reservation document
