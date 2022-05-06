@@ -1,12 +1,14 @@
 const usersRouter = require("express").Router();
 const User = require("../models/user");
 
+// Returns all users
 usersRouter.get("/", (request, response) => {
   User.find({}).then((users) => {
     response.json(users);
   });
 });
 
+// Returns a user matching the userId query parameter
 usersRouter.get("/:userId", (request, response, next) => {
   id = request.params.userId;
   User.findOne({ userId: id }, function (error, docs) {
@@ -19,12 +21,12 @@ usersRouter.get("/:userId", (request, response, next) => {
   });
 });
 
+// Add a new user to the database
 usersRouter.post("/", async (request, response, next) => {
   const auth = request.currentUser;
   let newUser;
 
   if (auth) {
-
     newUser = new User({
       userId: request.body.uid,
       name: request.body.name,
@@ -32,11 +34,12 @@ usersRouter.post("/", async (request, response, next) => {
       isEmployee: request.body.isEmployee,
     });
 
-    const newUserExistsAlready = await User.exists({userId: request.body.uid});
+    const newUserExistsAlready = await User.exists({
+      userId: request.body.uid,
+    });
 
     //save to db if user does not exist yet
-    if (!newUserExistsAlready) { 
-
+    if (!newUserExistsAlready) {
       newUser
         .save()
         .then((savedUser) => {
@@ -45,21 +48,15 @@ usersRouter.post("/", async (request, response, next) => {
         .catch((error) => {
           next(error);
         });
- 
-    }
-
-    else {
+    } else {
       console.log("logging in existing user");
     }
-
-  }
-
-  else {
+  } else {
     console.log("user not authorized");
   }
-
 });
 
+// Delete the user matching the userId query parameter
 usersRouter.delete("/:userId", (request, response, next) => {
   id = request.params.userId;
 
@@ -68,11 +65,11 @@ usersRouter.delete("/:userId", (request, response, next) => {
       response.json(result);
     })
     .catch((error) => {
-      //TODO: Push to error handler
       next(error);
     });
 });
 
+// Update the user matching the userId query parameter
 usersRouter.put("/:userId", (request, response, next) => {
   id = request.params.userId;
   const body = request.body;
@@ -89,7 +86,6 @@ usersRouter.put("/:userId", (request, response, next) => {
       response.json(result);
     })
     .catch((error) => {
-      //TODO: Push to error handler
       next(error);
     });
 });
