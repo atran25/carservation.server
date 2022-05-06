@@ -16,7 +16,7 @@ const errorHandler = (error, request, response, next) => {
   if (process.env.NODE_ENV !== "test") {
     console.error(error.message);
   }
-  console.error(error.name);
+  // console.error(error.name);
 
   if (error.name === "CastError") {
     return response.status(400).send({ error: error.message });

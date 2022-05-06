@@ -74,7 +74,6 @@ describe("a specific reservation can be viewed using the reservationId", () => {
   });
 
   test("fails with statuscode 400 if reservationId is invalid", async () => {
-    console.log("invalid");
     const invalidId = "54327746&%";
     const response = await api
       .get(`/api/reservations/reservationId/${invalidId}`)
