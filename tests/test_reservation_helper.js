@@ -17,7 +17,7 @@ const initialReservations = [
     licensePlate: "43",
     reservationDate: "2022-04-19",
     time: 19,
-    isCheckedIn: false,
+    isCheckedIn: true,
   },
   {
     reservationId: "19ed3897-44af-4fdb-84a2-56fa5a781982new1",
@@ -36,6 +36,15 @@ const initialReservations = [
     reservationDate: "2022-04-19",
     time: 19,
     isCheckedIn: false,
+  },
+  {
+    reservationId: "19ed3897-44af-4fdb-84a2-56fa5a781982new3",
+    parkingSpotId: "G",
+    userId: "RG2prv7v6whlSantpYOGijyg8eH3new3",
+    licensePlate: "43new",
+    reservationDate: "2022-04-22",
+    time: 21,
+    isCheckedIn: true,
   },
 ];
 

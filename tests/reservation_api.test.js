@@ -41,57 +41,112 @@ test("all reservations are returned", async () => {
   );
 });
 
-test("a specific reservation can be viewed using the reservationId", async () => {
-  const reservationToView = reservationHelper.initialReservations[0];
-  const reservationIdToView = reservationToView.reservationId;
+describe("a specific reservation can be viewed using the reservationId", () => {
+  test("succceeds with a valid reservationId", async () => {
+    const reservationToView = reservationHelper.initialReservations[0];
+    const reservationIdToView = reservationToView.reservationId;
 
-  const response = await api
-    .get(`/api/reservations/reservationId/${reservationIdToView}`)
-    .expect("Content-Type", /application\/json/);
+    const response = await api
+      .get(`/api/reservations/reservationId/${reservationIdToView}`)
+      .expect("Content-Type", /application\/json/);
 
-  const reservationResponse = response.body;
-  expect(reservationResponse.reservationId).toContain(
-    reservationToView.reservationId
-  );
-  expect(reservationResponse.userId).toContain(reservationToView.userId);
-  expect(reservationResponse.licensePlate).toContain(
-    reservationToView.licensePlate
-  );
-  expect(reservationResponse.reservationDate).toContain(
-    reservationToView.reservationDate
-  );
-  expect(reservationResponse.time).toEqual(reservationToView.time);
-  expect(reservationResponse.isCheckedIn).toBe(reservationToView.isCheckedIn);
+    const reservationResponse = response.body;
+    expect(reservationResponse.reservationId).toContain(
+      reservationToView.reservationId
+    );
+    expect(reservationResponse.userId).toContain(reservationToView.userId);
+    expect(reservationResponse.licensePlate).toContain(
+      reservationToView.licensePlate
+    );
+    expect(reservationResponse.reservationDate).toContain(
+      reservationToView.reservationDate
+    );
+    expect(reservationResponse.time).toEqual(reservationToView.time);
+    expect(reservationResponse.isCheckedIn).toBe(reservationToView.isCheckedIn);
+  });
+
+  test("fails with statuscode 404 if reservationId doesn't exist", async () => {
+    const validNonexistingId =
+      "19ed3897-44af-4fdb-84a2-56fa5a781982new2fakedoesnotexist";
+    const response = await api
+      .get(`/api/reservations/reservationId/${validNonexistingId}`)
+      .expect(404);
+  });
+
+  test("fails with statuscode 400 if reservationId is invalid", async () => {
+    console.log("invalid");
+    const invalidId = "54327746&%";
+    const response = await api
+      .get(`/api/reservations/reservationId/${invalidId}`)
+      .expect(400);
+  });
 });
 
-test("specific reservations can be viewed using the date", async () => {
-  const reservationToView = reservationHelper.initialReservations[0];
-  const reservationDateToView = reservationToView.reservationDate;
+describe("specific reservations can be viewed using the date", () => {
+  test("succceeds when using a valid date", async () => {
+    const reservationToView = reservationHelper.initialReservations[0];
+    const reservationDateToView = reservationToView.reservationDate;
 
-  const response = await api
-    .get(`/api/reservations/date/${reservationDateToView}`)
-    .expect("Content-Type", /application\/json/);
+    const response = await api
+      .get(`/api/reservations/date/${reservationDateToView}`)
+      .expect("Content-Type", /application\/json/);
 
-  // Loop through the initial reservations and if they are equal to the reservation date, add 1 to the counter
-  let initialReservationsWithCertainDate =
-    reservationHelper.initialReservations.reduce((sum, reservation) => {
-      return reservation.reservationDate === reservationDateToView
-        ? sum + 1
-        : sum;
-    }, 0);
+    // Loop through the initial reservations and if they are equal to the reservation date, add 1 to the counter
+    let initialReservationsWithCertainDate =
+      reservationHelper.initialReservations.reduce((sum, reservation) => {
+        return reservation.reservationDate === reservationDateToView
+          ? sum + 1
+          : sum;
+      }, 0);
 
-  const reservationResponse = response.body;
-  expect(reservationResponse).toHaveLength(initialReservationsWithCertainDate);
-  for (let reservation of response.body) {
-    expect(reservation.reservationDate).toContain(reservationDateToView);
-  }
+    const reservationResponse = response.body;
+    expect(reservationResponse).toHaveLength(
+      initialReservationsWithCertainDate
+    );
+    for (let reservation of response.body) {
+      expect(reservation.reservationDate).toContain(reservationDateToView);
+    }
+  });
+
+  test("fails with statuscode 404 if no reservation with date exists", async () => {
+    const reservationDateToView = "2022-05-19";
+    const response = await api
+      .get(`/api/reservations/date/${reservationDateToView}`)
+      .expect(404);
+  });
+
+  test("fails with statuscode 400 if date is invalid", async () => {
+    const reservationDateToView = "2022-05-52";
+    const response = await api
+      .get(`/api/reservations/date/${reservationDateToView}`)
+      .expect(400);
+  });
 });
 
 test("specific reservations can be viewed between a start and end date", async () => {
-  await api
-    .get("/api/reservations")
-    .expect(200)
+  const startDate = "2022-04-18";
+  const startDateTime = new Date(startDate).getTime();
+
+  const endDate = "2022-04-20";
+  const endDateTime = new Date(endDate).getTime();
+
+  const response = await api
+    .get(`/api/reservations/date/${startDate}/${endDate}`)
     .expect("Content-Type", /application\/json/);
+
+  // Loop through the initial reservations and if they are >= startDate and < endDate, add 1 to the counter
+  let initialReservationsBetweenDates =
+    reservationHelper.initialReservations.reduce((sum, reservation) => {
+      const currentReservationDate = reservation.reservationDate;
+      const currentReservationDateTime = new Date(
+        currentReservationDate
+      ).getTime();
+      return currentReservationDateTime >= startDateTime &&
+        currentReservationDateTime < endDateTime
+        ? sum + 1
+        : sum;
+    }, 0);
+  expect(response.body).toHaveLength(initialReservationsBetweenDates);
 });
 
 test("specific reservations can be viewed using the userId", async () => {
@@ -113,6 +168,18 @@ test("specific reservations can be viewed using the userId", async () => {
   for (let reservation of response.body) {
     expect(reservation.userId).toContain(reservationUserIdToView);
   }
+});
+
+test("all checked in reservations are returned", async () => {
+  const response = await api.get("/api/reservations/checkedIn");
+
+  // Loop through the initial reservations and if they are equal to the reservation date, add 1 to the counter
+  let initialReservationsCheckedIn =
+    reservationHelper.initialReservations.reduce((sum, reservation) => {
+      return reservation.isCheckedIn === true ? sum + 1 : sum;
+    }, 0);
+
+  expect(response.body).toHaveLength(initialReservationsCheckedIn);
 });
 
 test("a reservation can be added", async () => {

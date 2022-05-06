@@ -17,7 +17,17 @@ reservationsRouter.get(
       if (error) {
         next(error);
       } else {
-        response.json(docs);
+        if (docs === null) {
+          try {
+            const nonexistingError = new Error("nonexisting Id");
+            nonexistingError.name = "nonexistingError";
+            throw nonexistingError;
+          } catch (error) {
+            next(error);
+          }
+        } else {
+          response.json(docs);
+        }
       }
     });
   }
@@ -28,6 +38,15 @@ reservationsRouter.get("/date/:date", (request, response, next) => {
   date = new Date(request.params.date);
   Reservation.find({ reservationDate: date })
     .then((reservations) => {
+      if (!reservations || reservations.length == 0) {
+        try {
+          const nonexistingError = new Error("nonexisting date");
+          nonexistingError.name = "nonexistingError";
+          throw nonexistingError;
+        } catch (error) {
+          next(error);
+        }
+      }
       response.json(reservations);
     })
     .catch((error) => {
@@ -35,7 +54,7 @@ reservationsRouter.get("/date/:date", (request, response, next) => {
     });
 });
 
-// Return all reservations in range of startDate and endDate (inclusive)
+// Return all reservations in range of startDate(inclusive) and endDate(exclusive)
 reservationsRouter.get(
   "/date/:startDate/:endDate",
   (request, response, next) => {
@@ -45,7 +64,7 @@ reservationsRouter.get(
     const startDateMinus2hr = new Date(request.params.startDate);
     startDateMinus2hr.setHours(startDateMinus2hr.getHours() - 2);
     const endDate = new Date(request.params.endDate);
-    console.log(startDate, startDateMinus2hr);
+    // console.log(startDate, startDateMinus2hr);
 
     Reservation.find({
       $and: [
