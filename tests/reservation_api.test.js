@@ -123,51 +123,78 @@ describe("specific reservations can be viewed using the date", () => {
   });
 });
 
-test("specific reservations can be viewed between a start and end date", async () => {
-  const startDate = "2022-04-18";
-  const startDateTime = new Date(startDate).getTime();
+describe("specific reservations can be viewed between a start and end date", () => {
+  test("succeeds when using a valid start and end date ", async () => {
+    const startDate = "2022-04-18";
+    const startDateTime = new Date(startDate).getTime();
 
-  const endDate = "2022-04-20";
-  const endDateTime = new Date(endDate).getTime();
+    const endDate = "2022-04-20";
+    const endDateTime = new Date(endDate).getTime();
 
-  const response = await api
-    .get(`/api/reservations/date/${startDate}/${endDate}`)
-    .expect("Content-Type", /application\/json/);
+    const response = await api
+      .get(`/api/reservations/date/${startDate}/${endDate}`)
+      .expect("Content-Type", /application\/json/);
 
-  // Loop through the initial reservations and if they are >= startDate and < endDate, add 1 to the counter
-  let initialReservationsBetweenDates =
-    reservationHelper.initialReservations.reduce((sum, reservation) => {
-      const currentReservationDate = reservation.reservationDate;
-      const currentReservationDateTime = new Date(
-        currentReservationDate
-      ).getTime();
-      return currentReservationDateTime >= startDateTime &&
-        currentReservationDateTime < endDateTime
-        ? sum + 1
-        : sum;
-    }, 0);
-  expect(response.body).toHaveLength(initialReservationsBetweenDates);
+    // Loop through the initial reservations and if they are >= startDate and < endDate, add 1 to the counter
+    let initialReservationsBetweenDates =
+      reservationHelper.initialReservations.reduce((sum, reservation) => {
+        const currentReservationDate = reservation.reservationDate;
+        const currentReservationDateTime = new Date(
+          currentReservationDate
+        ).getTime();
+        return currentReservationDateTime >= startDateTime &&
+          currentReservationDateTime < endDateTime
+          ? sum + 1
+          : sum;
+      }, 0);
+    expect(response.body).toHaveLength(initialReservationsBetweenDates);
+  });
+
+  test("fails with statuscode 400 if date is invalid", async () => {
+    const startDate = "2022-04-51";
+    const endDate = "2022-04-20";
+
+    const response = await api
+      .get(`/api/reservations/date/${startDate}/${endDate}`)
+      .expect(400);
+  });
 });
 
-test("specific reservations can be viewed using the userId", async () => {
-  const reservationToView = reservationHelper.initialReservations[0];
-  const reservationUserIdToView = reservationToView.userId;
+describe("specific reservations can be viewed using the userId", () => {
+  test("succeds with valid userid", async () => {
+    const reservationToView = reservationHelper.initialReservations[0];
+    const reservationUserIdToView = reservationToView.userId;
 
-  const response = await api
-    .get(`/api/reservations/userId/${reservationUserIdToView}`)
-    .expect("Content-Type", /application\/json/);
+    const response = await api
+      .get(`/api/reservations/userId/${reservationUserIdToView}`)
+      .expect("Content-Type", /application\/json/);
 
-  // Loop through the initial reservations and if they are equal to the reservation date, add 1 to the counter
-  let initialReservationsWithUserId =
-    reservationHelper.initialReservations.reduce((sum, reservation) => {
-      return reservation.userId === reservationUserIdToView ? sum + 1 : sum;
-    }, 0);
+    // Loop through the initial reservations and if they are equal to the reservation date, add 1 to the counter
+    let initialReservationsWithUserId =
+      reservationHelper.initialReservations.reduce((sum, reservation) => {
+        return reservation.userId === reservationUserIdToView ? sum + 1 : sum;
+      }, 0);
 
-  const reservationResponse = response.body;
-  expect(reservationResponse).toHaveLength(initialReservationsWithUserId);
-  for (let reservation of response.body) {
-    expect(reservation.userId).toContain(reservationUserIdToView);
-  }
+    const reservationResponse = response.body;
+    expect(reservationResponse).toHaveLength(initialReservationsWithUserId);
+    for (let reservation of response.body) {
+      expect(reservation.userId).toContain(reservationUserIdToView);
+    }
+  });
+
+  test("fails with statuscode 404 if no reservation with userId exists", async () => {
+    const nonexistingUserId = "RG2prv7v6whlSantpYOGijyg8eH3nonexisting";
+    const response = await api
+      .get(`/api/reservations/userId/${nonexistingUserId}`)
+      .expect(404);
+  });
+
+  test("fails with statuscode 400 if date is invalid", async () => {
+    const invalidId = "RG2prv7v6whlSantpYOGijyg8eH3nonexisting%$#%#$&";
+    const response = await api
+      .get(`/api/reservations/userId/${invalidId}`)
+      .expect(400);
+  });
 });
 
 test("all checked in reservations are returned", async () => {
@@ -182,32 +209,50 @@ test("all checked in reservations are returned", async () => {
   expect(response.body).toHaveLength(initialReservationsCheckedIn);
 });
 
-test("a reservation can be added", async () => {
-  const newReservation = {
-    reservationId: "bbe0b65c-e781-4bec-81ff-3555a0949b2cadded",
-    parkingSpotId: "A",
-    userId: "RG2prv7v6whlSantpYOGijyg8eH3newuser",
-    licensePlate: "43420",
-    reservationDate: "2023-05-25",
-    time: 23,
-    isCheckedIn: true,
-  };
+describe("a reservation can be added", () => {
+  test("a valid reservation is added successfully", async () => {
+    const newReservation = {
+      reservationId: "bbe0b65c-e781-4bec-81ff-3555a0949b2cadded",
+      parkingSpotId: "A",
+      userId: "RG2prv7v6whlSantpYOGijyg8eH3newuser",
+      licensePlate: "43420",
+      reservationDate: "2023-05-25",
+      time: 23,
+      isCheckedIn: true,
+    };
 
-  await api
-    .post("/api/reservations")
-    .send(newReservation)
-    .expect(200)
-    .expect("Content-Type", /application\/json/);
+    await api
+      .post("/api/reservations")
+      .send(newReservation)
+      .expect(200)
+      .expect("Content-Type", /application\/json/);
 
-  const response = await reservationHelper.reservationsInDB();
-  const reservationId = response.map(
-    (reservation) => reservation.reservationId
-  );
+    const response = await reservationHelper.reservationsInDB();
+    const reservationId = response.map(
+      (reservation) => reservation.reservationId
+    );
 
-  expect(response).toHaveLength(
-    reservationHelper.initialReservations.length + 1
-  );
-  expect(reservationId).toContain("bbe0b65c-e781-4bec-81ff-3555a0949b2cadded");
+    expect(response).toHaveLength(
+      reservationHelper.initialReservations.length + 1
+    );
+    expect(reservationId).toContain(
+      "bbe0b65c-e781-4bec-81ff-3555a0949b2cadded"
+    );
+  });
+
+  test("an invalid reservation returns an error", async () => {
+    const newReservation = {
+      reservationId: "bbe0b65c-e781-4bec-81ff-3555a0949b2cadded$#@$",
+      parkingSpotId: "A$#@$@#",
+      userId: "RG2prv7v6whlSantpYOGijyg8eH3n%$%$ewuser",
+      licensePlate: "4342%$%#0",
+      reservationDate: "2023-05-66",
+      time: 23,
+      isCheckedIn: true,
+    };
+
+    await api.post("/api/reservations").send(newReservation).expect(400);
+  });
 });
 
 test("a duplicate reservation will not be added", async () => {
