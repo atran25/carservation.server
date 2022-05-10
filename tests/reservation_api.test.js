@@ -7,13 +7,10 @@ const reservationHelper = require("./test_reservation_helper");
 
 beforeEach(async () => {
   await Reservation.deleteMany({});
-  // console.log("Delete all reservations in database");
   for (let reservation of reservationHelper.initialReservations) {
     let newReservation = new Reservation(reservation);
     await newReservation.save();
-    // console.log("New reservation added to database");
   }
-  // console.log("All initial reservation in database added");
 });
 
 test("initial reservations were added", async () => {
@@ -146,6 +143,7 @@ describe("specific reservations can be viewed between a start and end date", () 
           ? sum + 1
           : sum;
       }, 0);
+
     expect(response.body).toHaveLength(initialReservationsBetweenDates);
   });
 
@@ -181,11 +179,11 @@ describe("specific reservations can be viewed using the userId", () => {
     }
   });
 
-  test("fails with statuscode 404 if no reservation with userId exists", async () => {
+  test("Succeeds with statuscode 200 if no reservation with userId exists", async () => {
     const nonexistingUserId = "RG2prv7v6whlSantpYOGijyg8eH3nonexisting";
     const response = await api
       .get(`/api/reservations/userId/${nonexistingUserId}`)
-      .expect(404);
+      .expect(200);
   });
 
   test("fails with statuscode 400 if date is invalid", async () => {

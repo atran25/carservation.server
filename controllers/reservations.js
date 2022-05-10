@@ -107,15 +107,6 @@ reservationsRouter.get("/userId/:userId", (request, response, next) => {
   id = request.params.userId;
   Reservation.find({ userId: id })
     .then((reservations) => {
-      if (!reservations || reservations.length == 0) {
-        try {
-          const nonexistingError = new Error("nonexisting userId");
-          nonexistingError.name = "nonexistingError";
-          throw nonexistingError;
-        } catch (error) {
-          next(error);
-        }
-      }
       response.json(reservations);
     })
     .catch((error) => {
